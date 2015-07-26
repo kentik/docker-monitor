@@ -1,7 +1,6 @@
 # Docker Container Monitoring
 
-Tools that help you effortlessly monitor realtime and historical
-memory, cpu, and network usage of running Docker containers, and
+Monitor realtime and historical memory, cpu, and network usage of running Docker containers, and
 share the dashboards with your team.
 
 
