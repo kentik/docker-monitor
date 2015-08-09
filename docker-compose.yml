@@ -21,7 +21,7 @@ cadvisor:
   links:
     - influxsrv:influxsrv
 grafana:
-  image: grafana/grafana
+  image: grafana/grafana:2.0.2
   ports:
     - "3000:3000"
   links:
