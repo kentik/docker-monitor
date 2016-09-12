@@ -61,13 +61,13 @@ dashboard into Grafana:
 
 4. View your new Grafana dashboard at [http://localhost:3000](http://localhost:3000).
 
-    ![Grafana screenshot](screenshots/grafana-screenshot.png)
+![Grafana screenshot](screenshots/grafana-screenshot.png)
 
 5. View your new cAdvisor realtime performance monitoring dashboard at
 [http://localhost:9090](http://localhost:9090).
 
-    ![cAdvisor screenshot](screenshots/cadvisor-screenshot.png)
+![cAdvisor screenshot](screenshots/cadvisor-screenshot.png)
 
 6. Query for specific metrics using your new InfluxDB instance at [http://localhost:8083](http://localhost:8083).
 
-    ![InfluxDB screenshot](screenshots/influxdb-screenshot.png)
+![InfluxDB screenshot](screenshots/influxdb-screenshot.png)
