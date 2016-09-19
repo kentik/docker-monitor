@@ -46,7 +46,7 @@ take a little while, since Composer will need to download Docker images
 from the [Docker Hub](https://registry.hub.docker.com/search):
 
 
-        docker-composer up
+        docker-compose up
 
 
 2. Wait 10 seconds, so the services have time to start.
