@@ -23,15 +23,14 @@ team's Grafana dashboards.
 Usage
 -----
 
-    grafana-influxdb.sh <db name> <file mask to dashboard JSON files (optional)>
+    grafana-influxdb.sh <file mask to dashboard JSON files (optional)>
 
 Example:
 
-    grafana-influxdb.sh myproject ./dashboards/*.json
+    grafana-influxdb.sh ./dashboards/*.json
 
-The first argument is used for the InfluxDB database, the InfluxDB user and
-password, and the Grafana data source. The second is fed to a `find` command,
-where each result's contents are submitted to Grafana via its HTTP API.
+The argument is fed to a `find` command, where each result's contents 
+are submitted to Grafana via its HTTP API.
 
 
 Dashboard JSON
@@ -47,7 +46,8 @@ Assumptions
 
 The script assumes a few ports and domains, as well as the root/root login for
 InfluxDB and admin/admin login for Grafana. All of these configurations are
-listed at the top of the script, so just change them to suit your needs.
+listed at the top of the script, so just change them to suit your needs. The 
+InfluxDB name, login, and password are all hard-coded to `cadvisor`.
 
 
 Credit

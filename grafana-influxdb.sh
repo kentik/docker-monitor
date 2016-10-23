@@ -44,8 +44,8 @@ DASHBOARD_FILEMASK=$1
 COOKIEJAR=$(mktemp)
 trap 'unlink ${COOKIEJAR}' EXIT
 function usage {
-  echo "Usage: ${0} <database_name> <dashboards file mask (optional)>"
-  echo "  example: ${0} 'myproject' './dashboards/*.json'"
+  echo "Usage: ${0} <dashboards file mask (optional)>"
+  echo "  example: ${0} ./dashboards/*.json"
   exit 1
 }
 
