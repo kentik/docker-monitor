@@ -56,10 +56,10 @@ and import the [Container Activity](dashboards/Container-Activity.json)
 dashboard into Grafana:
 
 
-        ./grafana-influxdb.sh cadvisor ./dashboards/*.json
+        ./grafana-influxdb.sh ./dashboards/*.json
 
 
-4. View your new Grafana dashboard at [http://localhost:3000](http://localhost:3000).
+4. View your new Grafana dashboard at [http://localhost:3000](http://localhost:3000) with admin/admin
 
 ![Grafana screenshot](screenshots/grafana-screenshot.png)
 

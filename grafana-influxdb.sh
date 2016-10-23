@@ -17,7 +17,7 @@
 #
 # Usage:
 #
-#   grafana-influxdb.sh <db name> <file mask to dashboards (optional)>
+#   grafana-influxdb.sh <file mask to dashboards (optional)>
 #
 
 INFLUXDB_API_URL='http://localhost:8086/'
@@ -25,19 +25,19 @@ INFLUXDB_API_REMOTE_URL='http://influxsrv:8086/'      # url for commands proxied
 INFLUXDB_ROOT_LOGIN='root'
 INFLUXDB_ROOT_PASSWORD='root'
 
-INFLUXDB_DB_NAME=$1
-INFLUXDB_DB_LOGIN=$1
-INFLUXDB_DB_PASSWORD=$1
+INFLUXDB_DB_NAME=cadvisor
+INFLUXDB_DB_LOGIN=cadvisor
+INFLUXDB_DB_PASSWORD=cadvisor
 
 GRAFANA_URL='http://localhost:3000/'
 GRAFANA_API_URL='http://localhost:3000/api/'
 GRAFANA_LOGIN='admin'
 GRAFANA_PASSWORD='admin'
-GRAFANA_DATA_SOURCE_NAME=$1
+GRAFANA_DATA_SOURCE_NAME=cadvisor
 
 # File mask that'll find all of the dashboards you want to load
 # Example: ./dashboards/*.json
-DASHBOARD_FILEMASK=$2
+DASHBOARD_FILEMASK=$1
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -49,34 +49,26 @@ function usage {
   exit 1
 }
 
-function influx_has_database {
-  curl --silent "${INFLUXDB_API_URL}db?u=${INFLUXDB_ROOT_LOGIN}&p=${INFLUXDB_ROOT_PASSWORD}" | grep --silent "${INFLUXDB_DB_NAME}"
-}
-
-function influx_create_database {
-  curl --silent --data-binary "{\"name\":\"${INFLUXDB_DB_NAME}\"}" "${INFLUXDB_API_URL}db?u=${INFLUXDB_ROOT_PASSWORD}&p=${INFLUXDB_ROOT_PASSWORD}"
-}
-
 function influx_has_user {
-  curl --silent "${INFLUXDB_API_URL}db/${INFLUXDB_DB_NAME}/users?u=${INFLUXDB_ROOT_LOGIN}&p=${INFLUXDB_ROOT_PASSWORD}" | grep --silent "${INFLUXDB_DB_LOGIN}"
+  curl \
+    --silent \
+    --data-urlencode "q=SHOW USERS" \
+    "${INFLUXDB_API_URL}query?u=${INFLUXDB_ROOT_LOGIN}&p=${INFLUXDB_ROOT_PASSWORD}" \
+    | grep --silent "${INFLUXDB_DB_LOGIN}"
 }
 
 function influx_create_user {
-  curl --silent --data-binary "{\"name\":\"${INFLUXDB_DB_NAME}\",\"password\":\"${INFLUXDB_DB_PASSWORD}\"}" "${INFLUXDB_API_URL}db/$INFLUXDB_DB_NAME/users?u=${INFLUXDB_ROOT_PASSWORD}&p=${INFLUXDB_ROOT_PASSWORD}"
+  curl \
+    --silent \
+    -XPOST \
+    --data-urlencode "q=CREATE USER ${INFLUXDB_DB_LOGIN} WITH PASSWORD '${INFLUXDB_DB_PASSWORD}'; GRANT ALL PRIVILEGES ON ${INFLUXDB_DB_NAME} TO ${INFLUXDB_DB_LOGIN}" \
+    "${INFLUXDB_API_URL}query?u=${INFLUXDB_ROOT_ADMIN}&p=${INFLUXDB_ROOT_PASSWORD}" > /dev/null 2>&1
 }
 
 function setup_influxdb {
-  if influx_has_database; then
-    info "InfluxDB: Database $INFLUXDB_DB_NAME already exists"
-  else
-    if influx_create_database; then
-      success "InfluxDB: Database $INFLUXDB_DB_NAME created"
-    else
-      error "InfluxDB: Database $INFLUXDB_DB_NAME could not be created"
-    fi
-  fi
+  # Note: InfluxDB is configured with PRE_CREATE_DB=cadvisor
   if influx_has_user; then
-    info "InfluxDB: Database ${INFLUXDB_DB_NAME} already has the user ${INFLUXDB_DB_LOGIN}"
+    info "InfluxDB: Database ${INFLUXDB_DB_NAME} already has the user ${influxdb_DB_LOGIN}"
   else
     if influx_create_user; then
       success "InfluxDB: Database ${INFLUXDB_DB_NAME} user ${INFLUXDB_DB_LOGIN} created"
@@ -105,10 +97,10 @@ function grafana_has_data_source {
 function grafana_create_data_source {
   setup_grafana_session
   curl --cookie "${COOKIEJAR}" \
-       -X PUT \
+       -X POST \
        --silent \
        -H 'Content-Type: application/json;charset=UTF-8' \
-       --data-binary "{\"name\":\"${GRAFANA_DATA_SOURCE_NAME}\",\"type\":\"influxdb_08\",\"url\":\"${INFLUXDB_API_REMOTE_URL}\",\"access\":\"proxy\",\"database\":\"$INFLUXDB_DB_NAME\",\"user\":\"${INFLUXDB_DB_LOGIN}\",\"password\":\"${INFLUXDB_DB_PASSWORD}\"}" \
+       --data-binary "{\"name\":\"${GRAFANA_DATA_SOURCE_NAME}\",\"type\":\"influxdb\",\"url\":\"${INFLUXDB_API_REMOTE_URL}\",\"access\":\"proxy\",\"database\":\"$INFLUXDB_DB_NAME\",\"user\":\"${INFLUXDB_DB_LOGIN}\",\"password\":\"${INFLUXDB_DB_PASSWORD}\"}" \
        "${GRAFANA_API_URL}datasources" 2>&1 | grep 'Datasource added' --silent;
 }
 
@@ -141,7 +133,7 @@ function ensure_grafana_dashboard {
        --silent \
        -H 'Content-Type: application/json;charset=UTF-8' \
        --data "@${TEMP_FILE}" \
-       "${GRAFANA_API_URL}dashboards/db" # > /dev/null 2>&1
+       "${GRAFANA_API_URL}dashboards/db" > /dev/null 2>&1
   echo
   unlink $TEMP_FILE
   rmdir $TEMP_DIR
