@@ -11,7 +11,7 @@
     {
       "collapse": false,
       "editable": true,
-      "height": "250px",
+      "height": "300px",
       "panels": [
         {
           "aliasColors": {},
@@ -26,131 +26,7 @@
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
-          "height": "",
-          "id": 1,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 12,
-          "stack": ___STACK___,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$tag_container_name.memory",
-              "column": "value",
-              "condition": "value <> 0 and ___CONTAINER_WHERE_CLAUSE___",
-              "function": "mean",
-              "groupby_field": "container_name",
-              "interval": "10s",
-              "query": "SELECT mean(\"value\") FROM \"memory_usage\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(previous)",
-              "refId": "A",
-              "policy": "default",
-              "dsType": "influxdb",
-              "resultFormat": "time_series",
-              "groupBy": [
-                {
-                  "type": "time",
-                  "params": [
-                    "$interval"
-                  ]
-                },
-                {
-                  "type": "tag",
-                  "params": [
-                    "container_name"
-                  ]
-                },
-                {
-                  "type": "fill",
-                  "params": [
-                    "null"
-                  ]
-                }
-              ],
-              "select": [
-                [
-                  {
-                    "type": "field",
-                    "params": [
-                      "value"
-                    ]
-                  },
-                  {
-                    "type": "mean",
-                    "params": []
-                  }
-                ]
-              ],
-              "measurement": "memory_usage",
-              "rawQuery": true
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Container Memory Usage",
-          "tooltip": {
-            "shared": true,
-            "value_type": "cumulative",
-            "sort": 0,
-            "msResolution": false
-          },
-          "type": "graph",
-          "yaxes": [
-            {
-              "show": true,
-              "min": 0,
-              "max": null,
-              "logBase": 1,
-              "format": "bytes"
-            },
-            {
-              "show": true,
-              "min": 0,
-              "max": null,
-              "logBase": 1,
-              "format": "bytes"
-            }
-          ],
-          "xaxis": {
-            "show": true
-          }
-        }
-      ],
-      "title": "Row"
-    },
-    {
-      "collapse": false,
-      "editable": true,
-      "height": "250px",
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": "cadvisor",
-          "editable": true,
-          "error": false,
-          "fill": 4,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
+          "height": "300px",
           "id": 4,
           "interval": "",
           "legend": {
@@ -174,7 +50,7 @@
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
-          "span": 12,
+          "span": 6,
           "stack": ___STACK___,
           "steppedLine": false,
           "targets": [
@@ -227,7 +103,7 @@
           "timeShift": null,
           "title": "Container CPU Usage",
           "tooltip": {
-            "shared": true,
+            "shared": ___TOOLTIP_SHARED___,
             "value_type": "cumulative",
             "sort": 0,
             "msResolution": false
@@ -267,6 +143,7 @@
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
+          "height": "300px",
           "id": 2,
           "interval": "",
           "legend": {
@@ -287,7 +164,7 @@
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
-          "span": 12,
+          "span": 6,
           "stack": ___STACK___,
           "steppedLine": false,
           "targets": [
@@ -382,7 +259,7 @@
           "timeShift": null,
           "title": "___NETWORK_USAGE_TITLE___",
           "tooltip": {
-            "shared": true,
+            "shared": ___TOOLTIP_SHARED___,
             "value_type": "cumulative",
             "sort": 0,
             "msResolution": false
@@ -407,7 +284,15 @@
           "xaxis": {
             "show": true
           }
-        },
+        }
+      ],
+      "title": "Row1"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "300px",
+      "panels": [
         {
           "aliasColors": {},
           "bars": false,
@@ -421,7 +306,7 @@
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
-          "height": "",
+          "height": "300px",
           "id": 1,
           "legend": {
             "avg": false,
@@ -441,7 +326,124 @@
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
-          "span": 12,
+          "span": 6,
+          "stack": ___STACK___,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$tag_container_name.memory",
+              "column": "value",
+              "condition": "value <> 0 and ___CONTAINER_WHERE_CLAUSE___",
+              "function": "mean",
+              "groupby_field": "container_name",
+              "interval": "10s",
+              "query": "SELECT mean(\"value\") FROM \"memory_usage\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(previous)",
+              "refId": "A",
+              "policy": "default",
+              "dsType": "influxdb",
+              "resultFormat": "time_series",
+              "groupBy": [
+                {
+                  "type": "time",
+                  "params": [
+                    "$interval"
+                  ]
+                },
+                {
+                  "type": "tag",
+                  "params": [
+                    "container_name"
+                  ]
+                },
+                {
+                  "type": "fill",
+                  "params": [
+                    "null"
+                  ]
+                }
+              ],
+              "select": [
+                [
+                  {
+                    "type": "field",
+                    "params": [
+                      "value"
+                    ]
+                  },
+                  {
+                    "type": "mean",
+                    "params": []
+                  }
+                ]
+              ],
+              "measurement": "memory_usage",
+              "rawQuery": true
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Container Memory Usage",
+          "tooltip": {
+            "shared": ___TOOLTIP_SHARED___,
+            "value_type": "cumulative",
+            "sort": 0,
+            "msResolution": false
+          },
+          "type": "graph",
+          "yaxes": [
+            {
+              "show": true,
+              "min": 0,
+              "max": null,
+              "logBase": 1,
+              "format": "bytes"
+            },
+            {
+              "show": true,
+              "min": 0,
+              "max": null,
+              "logBase": 1,
+              "format": "bytes"
+            }
+          ],
+          "xaxis": {
+            "show": true
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "cadvisor",
+          "editable": true,
+          "error": false,
+          "fill": 4,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "height": "300px",
+          "id": 3,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
           "stack": ___STACK___,
           "steppedLine": false,
           "targets": [
@@ -548,7 +550,7 @@
           "timeShift": null,
           "title": "Container Filesystem Usage",
           "tooltip": {
-            "shared": true,
+            "shared": ___TOOLTIP_SHARED___,
             "value_type": "cumulative",
             "sort": 0,
             "msResolution": false
@@ -575,7 +577,7 @@
           }
         }
       ],
-      "title": "New row"
+      "title": "Row"
     }
   ],
   "time": {

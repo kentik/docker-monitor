@@ -113,9 +113,11 @@ function ensure_dashboard_from_template {
 
   NET_USAGE_TITLE="Container Network Usage"
   FS_LIMIT_WHERE=""
+  TOOLTIP_SHARED="true"
   if [ $STACK = "true" ]; then
     NET_USAGE_TITLE="Container Network Usage (view a single container if --net=host)"
     FS_LIMIT_WHERE="and 1=0"
+    TOOLTIP_SHARED="false"
   fi
 
   TEMP_FILE_1=$(mktemp)
@@ -124,6 +126,7 @@ function ensure_dashboard_from_template {
     | sed -e "s|___STACK___|$STACK|g" \
     | sed -e "s|___FS_LIMIT_WHERE___|$FS_LIMIT_WHERE|g" \
     | sed -e "s|___NETWORK_USAGE_TITLE___|$NET_USAGE_TITLE|g" \
+    | sed -e "s|___TOOLTIP_SHARED___|$TOOLTIP_SHARED|g" \
     | sed -e "s|___CONTAINER_WHERE_CLAUSE___|$WHERE_CLAUSE|g" \
     > "${TEMP_FILE_1}"
 	ensure_grafana_dashboard "${TEMP_FILE_1}"
