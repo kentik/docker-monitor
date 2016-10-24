@@ -51,14 +51,13 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
+              "alias": "$tag_container_name.memory",
               "column": "value",
               "condition": "value <> 0 and ___CONTAINER_WHERE_CLAUSE___",
               "function": "mean",
               "groupby_field": "container_name",
               "interval": "10s",
-              "query": "SELECT mean(\"value\") FROM \"memory_usage\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(null)",
-              "series": "stats",
+              "query": "SELECT mean(\"value\") FROM \"memory_usage\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(previous)",
               "refId": "A",
               "policy": "default",
               "dsType": "influxdb",
@@ -180,15 +179,14 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
+              "alias": "$tag_container_name.cpu",
               "column": "value",
               "condition": "value > 0 and ___CONTAINER_WHERE_CLAUSE___",
               "fill": "",
               "function": "derivative",
               "groupby_field": "container_name",
               "interval": "5s",
-              "query": "SELECT sum(\"value\") FROM \"cpu_usage_total\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(null)",
-              "series": "stats",
+              "query": "SELECT derivative(mean(\"value\"), 10s) FROM \"cpu_usage_total\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(previous)",
               "refId": "B",
               "policy": "default",
               "dsType": "influxdb",
@@ -242,7 +240,7 @@
               "min": 0,
               "max": null,
               "logBase": 1,
-              "format": "none"
+              "format": "hertz"
             },
             {
               "show": true,
@@ -250,117 +248,6 @@
               "max": null,
               "logBase": 1,
               "format": "none"
-            }
-          ],
-          "xaxis": {
-            "show": true
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": "cadvisor",
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 3,
-          "interval": "",
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 12,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "column": "value",
-              "condition": "value > 0 and ___CONTAINER_WHERE_CLAUSE___",
-              "function": "derivative",
-              "groupby_field": "container_name",
-              "interval": "1m",
-              "query": "SELECT sum(\"value\") FROM \"rx_bytes\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(null)",
-              "series": "stats",
-              "refId": "A",
-              "policy": "default",
-              "dsType": "influxdb",
-              "resultFormat": "time_series",
-              "tags": [],
-              "groupBy": [
-                {
-                  "type": "time",
-                  "params": [
-                    "$interval"
-                  ]
-                },
-                {
-                  "type": "fill",
-                  "params": [
-                    "null"
-                  ]
-                }
-              ],
-              "select": [
-                [
-                  {
-                    "type": "field",
-                    "params": [
-                      "value"
-                    ]
-                  },
-                  {
-                    "type": "mean",
-                    "params": []
-                  }
-                ]
-              ],
-              "rawQuery": true
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Container Network Usage: Received",
-          "tooltip": {
-            "shared": true,
-            "value_type": "cumulative",
-            "sort": 0,
-            "msResolution": false
-          },
-          "type": "graph",
-          "yaxes": [
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "bytes"
-            },
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
             }
           ],
           "xaxis": {
@@ -405,13 +292,56 @@
           "steppedLine": false,
           "targets": [
             {
+              "alias": "$tag_container_name.tx",
               "column": "value",
               "condition": "value > 0 and ___CONTAINER_WHERE_CLAUSE___",
               "function": "derivative",
               "groupby_field": "container_name",
               "interval": "1m",
-              "query": "SELECT sum(\"value\") FROM \"tx_bytes\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(null)",
-              "series": "stats",
+              "query": "SELECT derivative(mean(\"value\"), 10s)/8 FROM \"tx_bytes\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(previous)",
+              "refId": "A",
+              "policy": "default",
+              "dsType": "influxdb",
+              "resultFormat": "time_series",
+              "tags": [],
+              "groupBy": [
+                {
+                  "type": "time",
+                  "params": [
+                    "$interval"
+                  ]
+                },
+                {
+                  "type": "fill",
+                  "params": [
+                    "null"
+                  ]
+                }
+              ],
+              "select": [
+                [
+                  {
+                    "type": "field",
+                    "params": [
+                      "value"
+                    ]
+                  },
+                  {
+                    "type": "mean",
+                    "params": []
+                  }
+                ]
+              ],
+              "rawQuery": true
+            },
+            {
+              "alias": "$tag_container_name.rx",
+              "column": "value",
+              "condition": "value > 0 and ___CONTAINER_WHERE_CLAUSE___",
+              "function": "derivative",
+              "groupby_field": "container_name",
+              "interval": "1m",
+              "query": "SELECT derivative(mean(\"value\"), 10s)/8 FROM \"rx_bytes\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(previous)",
               "refId": "A",
               "policy": "default",
               "dsType": "influxdb",
@@ -450,7 +380,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Container Network Usage: Sent",
+          "title": "Container Network Usage",
           "tooltip": {
             "shared": true,
             "value_type": "cumulative",
@@ -464,7 +394,7 @@
               "min": null,
               "max": null,
               "logBase": 1,
-              "format": "bytes"
+              "format": "Bps"
             },
             {
               "show": true,
@@ -472,6 +402,172 @@
               "max": null,
               "logBase": 1,
               "format": "short"
+            }
+          ],
+          "xaxis": {
+            "show": true
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "cadvisor",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "height": "",
+          "id": 1,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$tag_container_name.fs_usage",
+              "column": "value",
+              "condition": "value <> 0 and ___CONTAINER_WHERE_CLAUSE___",
+              "function": "mean",
+              "groupby_field": "container_name",
+              "interval": "10s",
+              "query": "SELECT mean(\"value\") FROM \"fs_usage\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(previous)",
+              "refId": "A",
+              "policy": "default",
+              "dsType": "influxdb",
+              "resultFormat": "time_series",
+              "groupBy": [
+                {
+                  "type": "time",
+                  "params": [
+                    "$interval"
+                  ]
+                },
+                {
+                  "type": "tag",
+                  "params": [
+                    "container_name"
+                  ]
+                },
+                {
+                  "type": "fill",
+                  "params": [
+                    "null"
+                  ]
+                }
+              ],
+              "select": [
+                [
+                  {
+                    "type": "field",
+                    "params": [
+                      "value"
+                    ]
+                  },
+                  {
+                    "type": "mean",
+                    "params": []
+                  }
+                ]
+              ],
+              "measurement": "memory_usage",
+              "rawQuery": true
+            },
+            {
+              "alias": "$tag_container_name.fs_limit",
+              "column": "value",
+              "condition": "value <> 0 and ___CONTAINER_WHERE_CLAUSE___",
+              "function": "mean",
+              "groupby_field": "container_name",
+              "interval": "10s",
+              "query": "SELECT mean(\"value\") FROM \"fs_limit\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(previous)",
+              "refId": "A",
+              "policy": "default",
+              "dsType": "influxdb",
+              "resultFormat": "time_series",
+              "groupBy": [
+                {
+                  "type": "time",
+                  "params": [
+                    "$interval"
+                  ]
+                },
+                {
+                  "type": "tag",
+                  "params": [
+                    "container_name"
+                  ]
+                },
+                {
+                  "type": "fill",
+                  "params": [
+                    "null"
+                  ]
+                }
+              ],
+              "select": [
+                [
+                  {
+                    "type": "field",
+                    "params": [
+                      "value"
+                    ]
+                  },
+                  {
+                    "type": "mean",
+                    "params": []
+                  }
+                ]
+              ],
+              "measurement": "memory_usage",
+              "rawQuery": true
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Container Filesystem Usage",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 0,
+            "msResolution": false
+          },
+          "type": "graph",
+          "yaxes": [
+            {
+              "show": true,
+              "min": 0,
+              "max": null,
+              "logBase": 1,
+              "format": "bytes"
+            },
+            {
+              "show": true,
+              "min": 0,
+              "max": null,
+              "logBase": 1,
+              "format": "bytes"
             }
           ],
           "xaxis": {
