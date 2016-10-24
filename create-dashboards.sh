@@ -5,19 +5,16 @@
 # Set up and pair an InfluxDB database with Grafana
 # - ensures the InfluxDB database and DB user exist
 # - ensures the proxied Grafana InfluxDB data store exists
-# - creates/updates dashboards found in an optional file mask
+# - creates/updates dashboards for each container, and one for all containers
 #
-# The InfluxDB database, InfluxDB user, and InfluxDB password
-# are set from the first command line argument. The optional
-# second argument is fed into a `find` command to find Grafana
-# dashboard JSON definitions, which will be loaded into Grafana.
+# The InfluxDB database, InfluxDB user, and InfluxDB password hard-coded to 'cadvisor'
 #
 # This is a modified fork of Lee Hambley's Gist:
 # at https://github.com/leehambley
 #
 # Usage:
 #
-#   grafana-influxdb.sh <file mask to dashboards (optional)>
+#   create-dashboards.sh
 #
 
 INFLUXDB_API_URL='http://localhost:8086/'
@@ -35,19 +32,12 @@ GRAFANA_LOGIN='admin'
 GRAFANA_PASSWORD='admin'
 GRAFANA_DATA_SOURCE_NAME=cadvisor
 
-# File mask that'll find all of the dashboards you want to load
-# Example: ./dashboards/*.json
-DASHBOARD_FILEMASK=$1
-
+NEWLINE='
+'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 COOKIEJAR=$(mktemp)
 trap 'unlink ${COOKIEJAR}' EXIT
-function usage {
-  echo "Usage: ${0} <dashboards file mask (optional)>"
-  echo "  example: ${0} ./dashboards/*.json"
-  exit 1
-}
 
 function influx_has_user {
   curl \
@@ -114,8 +104,24 @@ function setup_grafana {
       error "Grafana: Data source $INFLUXDB_DB_NAME could not be created"
     fi
   fi
+}
 
-  ensure_grafana_dashboards
+function ensure_dashboard_from_template {
+  TITLE=$1
+  WHERE_CLAUSE=$2
+
+  TEMP_FILE_1=$(mktemp)
+  cat "Container.json.tmpl" \
+    | sed -e "s|___TITLE___|$TITLE|g" \
+    | sed -e "s|___CONTAINER_WHERE_CLAUSE___|$WHERE_CLAUSE|g" \
+    > "${TEMP_FILE_1}"
+	ensure_grafana_dashboard "${TEMP_FILE_1}"
+  RET=$?
+  unlink "${TEMP_FILE_1}"
+  if [ "${RET}" -ne "0" ]; then
+    echo "An error occurred"
+    exit 1
+  fi
 }
 
 function ensure_grafana_dashboard {
@@ -134,17 +140,29 @@ function ensure_grafana_dashboard {
        -H 'Content-Type: application/json;charset=UTF-8' \
        --data "@${TEMP_FILE}" \
        "${GRAFANA_API_URL}dashboards/db" > /dev/null 2>&1
-  echo
   unlink $TEMP_FILE
   rmdir $TEMP_DIR
 }
 
 function ensure_grafana_dashboards {
-  if [ ! -z "${DASHBOARD_FILEMASK}" ]; then
-    for DASHBOARD_FILE in `find ${DASHBOARD_FILEMASK} -type f`; do
-      ensure_grafana_dashboard $DASHBOARD_FILE
-    done
-  fi
+	echo "Creating a dashboard for 'All Containers'"
+  ensure_dashboard_from_template 'All Containers' 'container_name !~ /\\\\//'
+
+	echo "Creating a dashboard for each running container"
+  IFS=$NEWLINE
+  for x in `docker ps`; do
+    CONTAINER_ID=`echo $x | awk '{print $1}'`
+    CONTAINER=`echo $x | awk 'END {print $NF}'`
+
+    # Skip the header
+    if [ "${CONTAINER_ID}" = "CONTAINER" ]; then
+      continue
+    fi
+
+    echo "creating a dashboard for container '${CONTAINER}'"
+    ensure_dashboard_from_template "${CONTAINER}" "container_name='${CONTAINER}'"
+  done
+  echo "Done"
 }
 
 function success {
@@ -159,14 +177,6 @@ function error {
   echo "$(tput setaf 1)""$*""$(tput sgr0)" 1>&2
 }
 
-function setup {
-  setup_influxdb
-  setup_grafana
-}
-
-if [ "$#" -eq "0" ]; then
-  usage
-else
-  setup
-fi
-
+setup_influxdb
+setup_grafana
+ensure_grafana_dashboards

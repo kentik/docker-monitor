@@ -1,7 +1,6 @@
 # Docker Container Monitoring
 
-Monitor realtime and historical memory, cpu, and network usage of running Docker containers, and
-share the dashboards with your team.
+Monitor real-time and historical memory, cpu, and network usage of your Docker containers.
 
 
 Run cAdvisor with InfluxDB and Grafana
@@ -12,7 +11,9 @@ service with an
 [InfluxDB](https://influxdb.com/docs/v0.9/introduction/overview.html)
 storage backend and [Grafana](http://grafana.org/) web-based dashboard
 with a simple command. Everything runs in
-Docker containers, so you don't need to install anything.
+Docker containers, so you don't need to install anything. Several Grafana
+dashboards are created for you: one showing all containers, and one for
+each.
 
 [docker-compose.yml](docker-compose.yml) is a
 [Docker Compose](https://docs.docker.com/compose/) definition that
@@ -28,11 +29,11 @@ Once cAdvisor is writing to InfluxDB, you'll need to configure
 Grafana to connect to InfluxDB, then load up your team's shared
 Dashboards.
 
-[grafana-influxdb.sh](grafana-influxdb.sh) ensures that an InfluxDB
+[create-dashboareds.sh](create-dashboards.sh) ensures that an InfluxDB
 database and user exists, that Grafana has a data store that points
-to it, and any dashboards that you point to are created in Grafana.
+to it, and all Grafana dashboards are created.
 
-Read [grafana-influxdb.README.md](grafana-influxdb.README.md) for details.
+Read [create-dashboards.README.md](create-dashboards.README.md) for details.
 
 
 Try It Out!
@@ -52,11 +53,10 @@ from the [Docker Hub](https://registry.hub.docker.com/search):
 2. Wait 10 seconds, so the services have time to start.
 
 3. Run this command, which will set up Grafana to talk with InfluxDB,
-and import the [Container Activity](dashboards/Container-Activity.json)
-dashboard into Grafana:
+and create dashboards for any existing Docker containers:
 
 
-        ./grafana-influxdb.sh ./dashboards/*.json
+        ./create-dashboards.sh
 
 
 4. View your new Grafana dashboard at [http://localhost:3000](http://localhost:3000) with admin/admin
@@ -71,3 +71,10 @@ dashboard into Grafana:
 6. Query for specific metrics using your new InfluxDB instance at [http://localhost:8083](http://localhost:8083).
 
 ![InfluxDB screenshot](screenshots/influxdb-screenshot.png)
+
+7. Re-run the shell script at any point, to create dashboards for all of the currently-running Docker containers
+
+
+        ./create-dashboards.sh
+
+

@@ -1,6 +1,6 @@
 {
   "id": 1,
-  "title": "Container Activity",
+  "title": "___TITLE___",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -53,23 +53,16 @@
             {
               "alias": "",
               "column": "value",
-              "condition": "value <> 0 and container_name !~ /.*\\//",
+              "condition": "value <> 0 and ___CONTAINER_WHERE_CLAUSE___",
               "function": "mean",
               "groupby_field": "container_name",
               "interval": "10s",
-              "query": "SELECT mean(\"value\") FROM \"memory_usage\" WHERE \"container_name\" <> '/docker' AND \"container_name\" <> '/' AND $timeFilter GROUP BY time($interval), \"container_name\" fill(null)",
+              "query": "SELECT mean(\"value\") FROM \"memory_usage\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(null)",
               "series": "stats",
               "refId": "A",
               "policy": "default",
               "dsType": "influxdb",
               "resultFormat": "time_series",
-              "tags": [
-                {
-                  "key": "container_name",
-                  "operator": "<>",
-                  "value": "/docker"
-                }
-              ],
               "groupBy": [
                 {
                   "type": "time",
@@ -189,24 +182,17 @@
             {
               "alias": "",
               "column": "value",
-              "condition": "value > 0 and container_name !~ /\\//",
+              "condition": "value > 0 and ___CONTAINER_WHERE_CLAUSE___",
               "fill": "",
               "function": "derivative",
               "groupby_field": "container_name",
               "interval": "5s",
-              "query": "SELECT sum(\"value\") FROM \"cpu_usage_total\" WHERE \"container_name\" <> '/' AND \"container_name\" <> '/docker' AND $timeFilter GROUP BY time($interval), container_name fill(null)",
+              "query": "SELECT sum(\"value\") FROM \"cpu_usage_total\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(null)",
               "series": "stats",
               "refId": "B",
               "policy": "default",
               "dsType": "influxdb",
               "resultFormat": "time_series",
-              "tags": [
-                {
-                  "key": "container_name",
-                  "operator": "<>",
-                  "value": "/"
-                }
-              ],
               "groupBy": [
                 {
                   "type": "time",
@@ -309,11 +295,11 @@
           "targets": [
             {
               "column": "value",
-              "condition": "value > 0 and container_name !~ /\\//",
+              "condition": "value > 0 and ___CONTAINER_WHERE_CLAUSE___",
               "function": "derivative",
               "groupby_field": "container_name",
               "interval": "1m",
-              "query": "SELECT sum(\"value\") FROM \"rx_bytes\" WHERE \"container_name\" <> '/' AND \"container_name\" <> '/docker' AND $timeFilter GROUP BY time($interval), container_name fill(null)",
+              "query": "SELECT sum(\"value\") FROM \"rx_bytes\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(null)",
               "series": "stats",
               "refId": "A",
               "policy": "default",
@@ -420,11 +406,11 @@
           "targets": [
             {
               "column": "value",
-              "condition": "value > 0 and container_name !~ /\\//",
+              "condition": "value > 0 and ___CONTAINER_WHERE_CLAUSE___",
               "function": "derivative",
               "groupby_field": "container_name",
               "interval": "1m",
-              "query": "SELECT sum(\"value\") FROM \"tx_bytes\" WHERE \"container_name\" <> '/' AND \"container_name\" <> '/docker' AND $timeFilter GROUP BY time($interval), container_name fill(null)",
+              "query": "SELECT sum(\"value\") FROM \"tx_bytes\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), container_name fill(null)",
               "series": "stats",
               "refId": "A",
               "policy": "default",
