@@ -46,35 +46,33 @@ and network activity for all of your Docker containers.
 take a little while, since Composer will need to download Docker images
 from the [Docker Hub](https://registry.hub.docker.com/search):
 
-
-        docker-compose up
-
-
+      ```
+      docker-compose up
+      ```
 2. Wait 10 seconds, so the services have time to start.
 
 3. Run this command, which will set up Grafana to talk with InfluxDB,
 and create dashboards for any existing Docker containers:
 
-
-        ./create-dashboards.sh
-
-
+      ```
+      ./create-dashboards.sh
+      ```
 4. View your new Grafana dashboard at [http://localhost:3000](http://localhost:3000) with admin/admin
 
-![Grafana screenshot](screenshots/grafana-screenshot.png)
+  ![Grafana screenshot](screenshots/grafana-screenshot.png)
 
 5. View your new cAdvisor realtime performance monitoring dashboard at
-[http://localhost:9090](http://localhost:9090).
 
-![cAdvisor screenshot](screenshots/cadvisor-screenshot.png)
+  [http://localhost:9090](http://localhost:9090).
+
+  ![cAdvisor screenshot](screenshots/cadvisor-screenshot.png)
 
 6. Query for specific metrics using your new InfluxDB instance at [http://localhost:8083](http://localhost:8083).
 
-![InfluxDB screenshot](screenshots/influxdb-screenshot.png)
+  ![InfluxDB screenshot](screenshots/influxdb-screenshot.png)
 
 7. Re-run the shell script at any point, to create dashboards for all of the currently-running Docker containers
 
-
-        ./create-dashboards.sh
-
-
+    ```
+    ./create-dashboards.sh
+    ```

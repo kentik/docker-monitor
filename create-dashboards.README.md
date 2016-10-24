@@ -20,7 +20,7 @@ every existing Docker container.
 Usage
 -----
 
-    create-dashboards.sh
+    ./create-dashboards.sh
 
 
 Assumptions
