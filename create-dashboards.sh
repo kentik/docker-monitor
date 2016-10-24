@@ -109,10 +109,18 @@ function setup_grafana {
 function ensure_dashboard_from_template {
   TITLE=$1
   WHERE_CLAUSE=$2
+  STACK=$3
+
+  NET_USAGE_TITLE="Container Network Usage"
+  if [ $STACK = "true" ]; then
+    NET_USAGE_TITLE="Container Network Usage (view a single container if --net=host)"
+  fi
 
   TEMP_FILE_1=$(mktemp)
   cat "Container.json.tmpl" \
     | sed -e "s|___TITLE___|$TITLE|g" \
+    | sed -e "s|___STACK___|$STACK|g" \
+    | sed -e "s|___NETWORK_USAGE_TITLE___|$NET_USAGE_TITLE|g" \
     | sed -e "s|___CONTAINER_WHERE_CLAUSE___|$WHERE_CLAUSE|g" \
     > "${TEMP_FILE_1}"
 	ensure_grafana_dashboard "${TEMP_FILE_1}"
@@ -146,7 +154,7 @@ function ensure_grafana_dashboard {
 
 function ensure_grafana_dashboards {
 	echo "Creating a dashboard for 'All Containers'"
-  ensure_dashboard_from_template 'All Containers' 'container_name !~ /\\\\//'
+  ensure_dashboard_from_template 'All Containers (Stacked)' 'container_name !~ /\\\\//' "true"
 
 	echo "Creating a dashboard for each running container"
   IFS=$NEWLINE
@@ -160,7 +168,7 @@ function ensure_grafana_dashboards {
     fi
 
     echo "creating a dashboard for container '${CONTAINER}'"
-    ensure_dashboard_from_template "${CONTAINER}" "container_name='${CONTAINER}'"
+    ensure_dashboard_from_template "${CONTAINER}" "container_name='${CONTAINER}'" "false"
   done
   echo "Done"
 }

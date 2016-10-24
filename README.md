@@ -39,8 +39,15 @@ Read [create-dashboards.README.md](create-dashboards.README.md) for details.
 Try It Out!
 -----------
 
-Try out the "Container Activity" dashboard, which shows the CPU, memory,
-and network activity for all of your Docker containers.
+**TODO:** Update screenshots
+
+Try out the "All Containers (Stacked)" dashboard, which shows the CPU, memory,
+and network activity for all of your Docker containers. 
+
+**Note about Container Network Usage:** if you use `--net=host` option in Docker, 
+each container is reporting all traffic on the shared network interface, so you'll 
+lose per-container visibility. You'll need to click on a single container to see 
+the proper sum of all.
 
 1. Start your monitoring Docker cluster. The first time you run this might
 take a little while, since Composer will need to download Docker images
