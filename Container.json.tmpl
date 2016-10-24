@@ -501,7 +501,7 @@
               "function": "mean",
               "groupby_field": "container_name",
               "interval": "10s",
-              "query": "SELECT mean(\"value\") FROM \"fs_limit\" WHERE ___CONTAINER_WHERE_CLAUSE___ AND ___CONTAINER_WHERE_CLAUSE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(previous)",
+              "query": "SELECT mean(\"value\") FROM \"fs_limit\" WHERE ___CONTAINER_WHERE_CLAUSE___ ___FS_LIMIT_WHERE___ AND $timeFilter GROUP BY time($interval), \"container_name\" fill(previous)",
               "refId": "A",
               "policy": "default",
               "dsType": "influxdb",

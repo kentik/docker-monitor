@@ -112,14 +112,17 @@ function ensure_dashboard_from_template {
   STACK=$3
 
   NET_USAGE_TITLE="Container Network Usage"
+  FS_LIMIT_WHERE=""
   if [ $STACK = "true" ]; then
     NET_USAGE_TITLE="Container Network Usage (view a single container if --net=host)"
+    FS_LIMIT_WHERE="and 1=0"
   fi
 
   TEMP_FILE_1=$(mktemp)
   cat "Container.json.tmpl" \
     | sed -e "s|___TITLE___|$TITLE|g" \
     | sed -e "s|___STACK___|$STACK|g" \
+    | sed -e "s|___FS_LIMIT_WHERE___|$FS_LIMIT_WHERE|g" \
     | sed -e "s|___NETWORK_USAGE_TITLE___|$NET_USAGE_TITLE|g" \
     | sed -e "s|___CONTAINER_WHERE_CLAUSE___|$WHERE_CLAUSE|g" \
     > "${TEMP_FILE_1}"
